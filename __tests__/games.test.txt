@@ -1,0 +1,94 @@
+require("dotenv").config();
+const { app } = require("../src/server");
+const supertest = require("supertest");
+const mockRequest = supertest(app);
+const { db } = require("../src/models/index.js");
+
+describe("Games Routes:", () => {
+  beforeAll(async () => {
+    await db.sync();
+  });
+
+  afterAll(async () => {
+    await db.drop();
+  });
+
+  //GET all
+  it("should respond with a status code of 200 and a list of games to a request for all games", () => {
+    return mockRequest
+      .post("/games")
+      .send({ title: "test", releaseYear: 1969 })
+      .then((data) => {
+        mockRequest.get("/games").then((results) => {
+          expect(results.status).toBe(200);
+          expect(typeof results.body).toBe("object");
+        });
+      });
+  });
+
+  //GET one
+  it("should respond with a status code of 200 and the queried game to a request for one game", () => {
+    return mockRequest
+      .post("/games")
+      .send({ title: "test", releaseYear: 1969 })
+      .then((data) => {
+        mockRequest.get(`/games/${data.id}`).then((results) => {
+          expect(results.status).toBe(200);
+          expect(typeof results.body).toBe("object");
+        });
+      });
+  });
+
+  //POST
+  it("should respond with a status code of 201 and the created game upon creation", () => {
+    return mockRequest
+      .post("/games")
+      .send({ title: "Team Fortress 2", releaseYear: 2007 })
+      .then((results) => {
+        expect(results.status).toBe(201);
+        expect(typeof results.body).toBe("object");
+      });
+  });
+
+  // PUT
+  it("should respond with a status code of 202 and the updated game after successfully updating", () => {
+    return mockRequest
+      .post("/games")
+      .send({ title: "Team Fortress 2", releaseYear: 2007 })
+      .then((data) => {
+        mockRequest.put(`/games/${data.id}`).then((results) => {
+          expect(results.status).toBe(202);
+          expect(typeof results.body).toBe("object");
+        });
+      });
+  });
+
+  //DELETE
+  it("should respond with a status code of 202 after successfully deleting", () => {
+    return mockRequest
+      .post("/games")
+      .send({ title: "Team Fortress 2", releaseYear: 2007 })
+      .then((data) => {
+        mockRequest.delete(`/games/${data.id}`).then((results) => {
+          expect(results.status).toBe(202);
+          expect(typeof results.body).toBe(null);
+        });
+      });
+  });
+
+  //Errors
+  // it("should respond with a 404 error when trying to access a game that does not exist", () => {
+  //   mockRequest.get("/games/abcd").then((results) => {
+  //     expect(results.status).toBe(404);
+  //   });
+  // });
+
+  // it("should respond with a 400 error when recieving incorrect data for creating or updating", () => {
+  //   mockRequest
+  //     .post("/games")
+  //     .send({ title: 200, releaseYear: "2001" })
+  //     .then((results) => {
+  //       expect(results.status).toBe(400);
+  //     });
+  // });
+});
