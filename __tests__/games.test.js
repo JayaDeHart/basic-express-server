@@ -5,11 +5,11 @@ const mockRequest = supertest(app);
 const { db } = require("../src/models/index.js");
 
 describe("Games Routes:", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await db.sync();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.drop();
   });
 
