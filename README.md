@@ -14,5 +14,5 @@ You will need to create a .env file with a DATABASE_URL value that points to you
 https://github.com/JayaDeHart/basic-express-server/pull/2
 
 #### deployed:
-https://jayadehart-express-server2.herokuapp.com/
+https://jayadehart-express-server-2.herokuapp.com/
 
